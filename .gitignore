@@ -57,4 +57,5 @@ hs_err_pid*
 
 project.properties
 *.properties
+.properties
 >>>>>>> 45d9dbe2080f6c8ef02d14f4cf7f644159eba79f
