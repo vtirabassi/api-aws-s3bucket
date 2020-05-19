@@ -32,7 +32,10 @@ public class FileService {
 
 	@Value("${app.awsServices.bucketName}")
 	String defaultBucketName;
-
+	
+	@Value("${app.files.directoryBase}")
+	String directoryBase;
+	
 	public List<Bucket> getAllBuckets() {
 		return amazonS3Client.listBuckets();
 	}
@@ -96,7 +99,7 @@ public class FileService {
 		amazonS3Client.putObject(
 				defaultBucketName, 
 				  nameFile, 
-				  new File("/Users/vinicius/Downloads/" + nameFile)
+				  new File(directoryBase + nameFile)
 				);
 	}
 }
