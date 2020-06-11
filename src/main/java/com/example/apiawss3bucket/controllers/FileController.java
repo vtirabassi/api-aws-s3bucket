@@ -1,5 +1,6 @@
 package com.example.apiawss3bucket.controllers;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.ObjectListing;
@@ -44,8 +46,8 @@ public class FileController {
 	}
 
 	@PostMapping(path = "/upload", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-	public void SendFile(@RequestParam String nameFile) {
-		fileService.SendFile(nameFile);
+	public void SendFile(@RequestParam("file") MultipartFile file) {
+		fileService.uploadFile(file);
 	}
 
 }

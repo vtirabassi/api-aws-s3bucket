@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-DemoApplication<api-aws-s3bucket>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.example.apiawss3bucket.DemoApplication",
+            "projectName": "api-aws-s3bucket",
+            "args": ""
+        }
+    ]
+}

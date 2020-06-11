@@ -11,9 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException.BadRequest;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.example.apiawss3bucket.utils.*;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.services.fsx.model.BadRequestException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -28,7 +32,7 @@ import com.amazonaws.util.IOUtils;
 public class FileService {
 
 	@Autowired
-	AmazonS3Client amazonS3Client;
+	AmazonS3 amazonS3Client;
 
 	@Value("${app.awsServices.bucketName}")
 	String defaultBucketName;
@@ -40,25 +44,28 @@ public class FileService {
 		return amazonS3Client.listBuckets();
 	}
 
-	public void uploadFile(File uploadFile) {
-		amazonS3Client.putObject(defaultBucketName, uploadFile.getName(), uploadFile);
+	public void uploadFile(MultipartFile uploadFile) {
+
+		File file = convert(uploadFile);
+		if (file == null)
+			new BadRequestException("teste");
+
+		amazonS3Client.putObject(defaultBucketName,  file.getName(), file);
 	}
 
-	public void uploadFile(String name, byte[] content) {
-		File file = new File("/tmp/" + name);
-		file.canWrite();
-		file.canRead();
-		FileOutputStream iofs = null;
+	public static File convert(MultipartFile file) {
+		
 		try {
-			iofs = new FileOutputStream(file);
-			iofs.write(content);
-			amazonS3Client.putObject(defaultBucketName, "/" + file.getName(), file);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			File convFile = new File(file.getOriginalFilename());
+			convFile.createNewFile();
+			FileOutputStream fos = new FileOutputStream(convFile);
+			fos.write(file.getBytes());
+			fos.close();
+			return convFile;
+		} catch (Exception e) {
+			return null;
 		}
-
+		
 	}
 
 	public byte[] getFile(String key) {
